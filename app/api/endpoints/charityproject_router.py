@@ -6,7 +6,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.api.validators import (
     check_charity_project_exists,
     check_correct_full_amount_for_update,
-    check_name_duplicate, check_project_was_closed,
+    check_name_duplicate,
+    check_project_was_closed,
     check_project_was_invested
 )
 from app.core.db import get_async_session
@@ -18,7 +19,7 @@ from app.schemas.charity_project import (
     CharityProjectDB,
     CharityProjectUpdate
 )
-from app.services.investment import execute_investment_process
+from app.invest.investment import execute_investment_process
 
 router = APIRouter()
 
@@ -29,10 +30,9 @@ router = APIRouter()
     response_model_exclude_none=True
 )
 async def get_all_charity_projects(
-        session: AsyncSession = Depends(get_async_session)
+    session: AsyncSession = Depends(get_async_session)
 ):
-    charity_projects = await charityproject_crud.get_multiple(session)
-    return charity_projects
+    return await charityproject_crud.get_multiple(session)
 
 
 @router.post(
@@ -42,22 +42,23 @@ async def get_all_charity_projects(
     response_model_exclude_none=True,
 )
 async def create_new_charity_project(
-        charity_project: CharityProjectCreate,
-        session: AsyncSession = Depends(get_async_session),
+    charity_project: CharityProjectCreate,
+    session: AsyncSession = Depends(get_async_session)
 ):
-    await check_name_duplicate(
-        charity_project.name, session
-    )
+    await check_name_duplicate(charity_project.name, session)
     new_charity_project = await charityproject_crud.create(
-        charity_project, session, need_commit=False
-    )
-    session.add_all(
-        execute_investment_process(
-            new_charity_project,
-            await donation_crud.get_not_fully_invested_objects(session))
-    )
+        charity_project,
+        session, need_commit=False)
+
+    not_fully_invested_objects = await (
+        donation_crud.get_not_fully_invested_objects(session))
+    session.add_all(execute_investment_process(
+        new_charity_project,
+        not_fully_invested_objects))
+
     await session.commit()
     await session.refresh(new_charity_project)
+
     return new_charity_project
 
 
@@ -67,27 +68,28 @@ async def create_new_charity_project(
     dependencies=[Depends(current_superuser)]
 )
 async def partially_update_charity_project(
-        project_id: int,
-        object_in: CharityProjectUpdate,
-        session: AsyncSession = Depends(get_async_session),
+    project_id: int,
+    object_in: CharityProjectUpdate,
+    session: AsyncSession = Depends(get_async_session)
 ):
     charity_project = await check_charity_project_exists(
-        project_id, session
-    )
+        project_id, session)
     await check_project_was_closed(project_id, session)
 
     if object_in.full_amount is not None:
         await check_correct_full_amount_for_update(
-            project_id, session, object_in.full_amount
-        )
+            project_id,
+            session,
+            object_in.full_amount)
 
     if object_in.name is not None:
         await check_name_duplicate(
-            object_in.name, session
-        )
+            object_in.name, session)
+
     return await charityproject_crud.update(
-        charity_project, object_in, session
-    )
+        charity_project,
+        object_in,
+        session)
 
 
 @router.delete(
@@ -96,15 +98,12 @@ async def partially_update_charity_project(
     dependencies=[Depends(current_superuser)]
 )
 async def delete_charity_project(
-        project_id: int,
-        session: AsyncSession = Depends(get_async_session),
+    project_id: int,
+    session: AsyncSession = Depends(get_async_session)
 ):
     charity_project = await charityproject_crud.get(
-        project_id, session
-    )
+        project_id,
+        session)
     await check_project_was_invested(charity_project)
-    return await (
-        charityproject_crud.remove(
-            charity_project, session
-        )
-    )
+
+    return await charityproject_crud.remove(charity_project, session)

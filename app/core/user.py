@@ -19,8 +19,7 @@ from app.core.config import settings
 from app.core.db import get_async_session
 from app.models.user import User
 from app.schemas.user import UserCreate
-
-JWT_TOKEN_LIFETIME = 3600
+from const import JWT_TOKEN_LIFETIME, MIN_PASSWORD_LEN
 
 
 class UserManager(IntegerIDMixin, BaseUserManager[User, int]):
@@ -30,7 +29,7 @@ class UserManager(IntegerIDMixin, BaseUserManager[User, int]):
             password: str,
             user: Union[UserCreate, User],
     ) -> None:
-        if len(password) < 3:
+        if len(password) < MIN_PASSWORD_LEN:
             raise InvalidPasswordException(
                 reason='Пароль не может быть меньше 3 символов.'
             )
@@ -45,7 +44,8 @@ async def get_user_db(session: AsyncSession = Depends(get_async_session)):
 
 
 def get_jwt_strategy() -> JWTStrategy:
-    return JWTStrategy(secret=settings.secret, lifetime_seconds=JWT_TOKEN_LIFETIME)
+    return JWTStrategy(secret=settings.secret,
+                       lifetime_seconds=JWT_TOKEN_LIFETIME)
 
 
 auth_backend = AuthenticationBackend(

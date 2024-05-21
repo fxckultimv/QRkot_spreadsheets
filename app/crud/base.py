@@ -2,7 +2,7 @@ from typing import Generic, List, Optional, Type, TypeVar
 
 from fastapi.encoders import jsonable_encoder
 from pydantic import BaseModel
-from sqlalchemy import select, false, extract
+from sqlalchemy import select, false
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models.base import Base
@@ -74,24 +74,6 @@ class CRUDBase(
                 self.model
             ).where(
                 self.model.fully_invested == false()).order_by(
-                self.model.create_date
-            )
+                    self.model.create_date)
         )
         return not_fully_invested_objects.scalars().all()
-
-    async def get_projects_by_completion_rate(
-            self,
-            session: AsyncSession,
-    ):
-        projects = await session.execute(
-            select(self.model).where(
-                self.model.fully_invested
-            ).order_by(
-                (
-                    extract('day', self.model.close_date)
-                ) - (
-                    extract('day', self.model.create_date)
-                )
-            )
-        )
-        return projects.scalars().all()
