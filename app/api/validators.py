@@ -7,9 +7,16 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.crud.charity_project import charityproject_crud
 from app.models.charity_project import CharityProject
-from const import (PROJECT_NOT_FOUND_ERROR, PROJECT_EXISTS_ERROR,
-                   FORBIDDEN_UPDATE_ERROR, INVESTED_RPOJECT_DELETE_ERROR,
-                   INVALID_INVESTED_AMOUNT_ERROR)
+
+PROJECT_NOT_FOUND_ERROR = 'Проект не найден'
+PROJECT_EXISTS_ERROR = 'Проект с таким названием уже есть.'
+FORBIDDEN_UPDATE_ERROR = 'Закрытый проект нельзя редактировать.'
+INVESTED_RPOJECT_DELETE_ERROR = (
+    'В проект инвестировали, невозможно удалить.'
+)
+INVALID_INVESTED_AMOUNT_ERROR = (
+    'Новая сумма должна быть больше ранее внесенной'
+)
 
 
 async def check_charity_project_exists(
