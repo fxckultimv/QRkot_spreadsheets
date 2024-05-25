@@ -9,14 +9,9 @@ from app.crud.charity_project import charityproject_crud
 from app.crud.donation import donation_crud
 from app.models.user import User
 from app.schemas.donation import DonationCreate, DonationDB
-from app.invest.investment import execute_investment_process
+from app.services.investment import execute_investment_process
 
-EXCLUDE_FIELDS = (
-    'user_id',
-    'invested_amount',
-    'fully_invested',
-    'close_date'
-)
+from const import EXCLUDE_FIELDS
 
 router = APIRouter()
 

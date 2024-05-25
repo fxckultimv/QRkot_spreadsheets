@@ -1,11 +1,9 @@
-from http import HTTPStatus
-
 from fastapi import APIRouter, HTTPException
 
 from app.core.user import auth_backend, fastapi_users
 from app.schemas.user import UserCreate, UserRead, UserUpdate
 
-USER_DELETION_ERROR = 'Удалять пользователя запрещено.'
+from const import USER_DELETION_ERROR
 
 router = APIRouter()
 
@@ -35,6 +33,6 @@ router.include_router(
 )
 def delete_user(id: str):
     raise HTTPException(
-        status_code=HTTPStatus.UNPROCESSABLE_ENTITY,
+        status_code=422,
         detail=USER_DELETION_ERROR
     )

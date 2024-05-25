@@ -27,3 +27,23 @@ MAX_NAME_LEN = 100
 
 GOOGLE_PREFIX = '/google'
 GOOGLE_TAGS = ['Google']
+
+PROJECT_NOT_FOUND_ERROR = 'Проект не найден'
+PROJECT_EXISTS_ERROR = 'Проект с таким названием уже есть.'
+FORBIDDEN_UPDATE_ERROR = 'Закрытый проект нельзя редактировать.'
+INVESTED_RPOJECT_DELETE_ERROR = (
+    'В проект инвестировали, невозможно удалить.'
+)
+INVALID_INVESTED_AMOUNT_ERROR = (
+    'Новая сумма должна быть больше ранее внесенной'
+)
+
+EXCLUDE_FIELDS = (
+    'user_id',
+    'invested_amount',
+    'fully_invested',
+    'close_date'
+)
+
+
+USER_DELETION_ERROR = 'Удалять пользователя запрещено.'
