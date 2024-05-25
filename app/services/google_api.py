@@ -5,40 +5,14 @@ from aiogoogle import Aiogoogle
 from app.core.config import settings
 from app.models.charity_project import CharityProject
 
-SPREADSHEET_TEMPLATE = {
-    "properties": {
-        "title": "Отчёт от {date_time}",
-        "locale": "ru_RU",
-    },
-    "sheets": [
-        {
-            "properties": {
-                "sheetType": "GRID",
-                "sheetId": 0,
-                "title": "Лист1",
-                "gridProperties": {
-                    "rowCount": settings.ROW_COUNT,
-                    "columnCount": settings.COLUMN_COUNT,
-                },
-            }
-        }
-    ],
-}
-TABLE_VALUES = [
-    ['Топ проектов по скорости закрытия'],
-    ['Название проекта', 'Время сбора', 'Описание'],
-]
-
+from const import (PERMISSIONS, SPREADSHEET_TEMPLATE,
+                   TABLE_VALUES)
 
 async def set_user_permissions(
         spreadsheet_id: str,
         wrapper_services: Aiogoogle
 ):
-    permissions_body = {
-        'type': 'user',
-        'role': 'writer',
-        'emailAddress': settings.email
-    }
+    permissions_body = PERMISSIONS
     service = await wrapper_services.discover(
         'drive', settings.DRIVE_VERSION
     )

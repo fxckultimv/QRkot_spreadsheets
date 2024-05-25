@@ -1,3 +1,5 @@
+from app.core.config import settings
+
 USER_PREFIX = ''
 DONATION_PREFIX = '/donation'
 CHARITY_PROJECT_PREFIX = '/charity_project'
@@ -47,3 +49,31 @@ EXCLUDE_FIELDS = (
 
 
 USER_DELETION_ERROR = 'Удалять пользователя запрещено.'
+
+SPREADSHEET_TEMPLATE = {
+    "properties": {
+        "title": "Отчёт от {date_time}",
+        "locale": "ru_RU",
+    },
+    "sheets": [
+        {
+            "properties": {
+                "sheetType": "GRID",
+                "sheetId": 0,
+                "title": "Лист1",
+                "gridProperties": {
+                    "rowCount": settings.ROW_COUNT,
+                    "columnCount": settings.COLUMN_COUNT,
+                },
+            }
+        }
+    ],
+}
+TABLE_VALUES = [
+    ['Топ проектов по скорости закрытия'],
+    ['Название проекта', 'Время сбора', 'Описание'],
+]
+
+PERMISSIONS = {'type': 'user',
+               'role': 'writer',
+               'emailAddress': settings.email}
