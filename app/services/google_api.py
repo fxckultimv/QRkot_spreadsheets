@@ -1,12 +1,11 @@
 from datetime import datetime
 
 from aiogoogle import Aiogoogle
+from const import PERMISSIONS, SPREADSHEET_TEMPLATE, TABLE_VALUES
 
 from app.core.config import settings
 from app.models.charity_project import CharityProject
 
-from const import (PERMISSIONS, SPREADSHEET_TEMPLATE,
-                   TABLE_VALUES)
 
 async def set_user_permissions(
         spreadsheet_id: str,
