@@ -19,7 +19,7 @@ from app.schemas.charity_project import (
     CharityProjectDB,
     CharityProjectUpdate
 )
-from app.invest.investment import execute_investment_process
+from app.services.investment import execute_investment_process
 
 router = APIRouter()
 
