@@ -14,7 +14,9 @@ load_dotenv('.env')
 
 config = context.config
 
-config.set_main_option('sqlalchemy.url', 'sqlite+aiosqlite:///./cat_charity_fund.db')
+config.set_main_option(
+    'sqlalchemy.url',
+    'sqlite+aiosqlite:///./cat_charity_fund.db')
 
 if config.config_file_name is not None:
     fileConfig(config.config_file_name)
